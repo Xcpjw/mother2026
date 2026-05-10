@@ -6,78 +6,227 @@
     <title>母亲节快乐</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
+            width: 100vw;
             height: 100vh;
-            background: linear-gradient(135deg, #ffd1d1 0%, #ffebf0 100%);
+            background: linear-gradient(135deg, #ffd6e0 0%, #ffe0eb 100%);
             font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
             overflow: hidden;
             position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
-        .petal {
-            position: absolute; top: -80px; font-size: 30px;
-            animation: fall linear infinite; opacity: 0.7; pointer-events: none;
+
+        /* ========== 中间大字祝福 ========== */
+        .main-text {
+            text-align: center;
+            color: #C70039;
+            z-index: 10;
+            animation: fadeInUp 1.5s ease-out;
+            text-shadow: 2px 2px 8px rgba(199,0,57,0.2);
+            padding: 20px;
+        }
+        .main-text h1 {
+            font-size: clamp(24px, 6vw, 42px);
+            font-weight: bold;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .main-text .sub {
+            font-size: clamp(16px, 3vw, 24px);
+            color: #d85a7c;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== 飘落爱心 ========== */
+        .heart {
+            position: absolute;
+            top: -60px;
+            font-size: 30px;
+            animation: fall linear infinite;
+            pointer-events: none;
+            z-index: 5;
         }
         @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+            0% { 
+                transform: translateY(-10vh) rotate(0deg) scale(0.8);
+                opacity: 1; 
+            }
+            80% { opacity: 0.8; }
+            100% { 
+                transform: translateY(105vh) rotate(360deg) scale(1.2);
+                opacity: 0; 
+            }
         }
+
+        /* ========== 连环弹窗模拟 ========== */
         .popup-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.35); display: flex;
-            justify-content: center; align-items: center;
-            z-index: 1000; backdrop-filter: blur(2px);
+            background: rgba(0,0,0,0.5);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(3px);
         }
         .popup-box {
-            background: #fff; border-radius: 24px; padding: 40px 30px 30px;
-            text-align: center; box-shadow: 0 20px 40px rgba(255,105,135,0.25);
-            position: relative; max-width: 320px; width: 85%;
-            animation: popIn 0.5s cubic-bezier(0.68,-0.55,0.27,1.55);
+            background: white;
+            border-radius: 24px;
+            padding: 35px 25px 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(255, 105, 135, 0.3);
+            max-width: 320px;
+            width: 85%;
+            animation: popIn 0.4s cubic-bezier(0.68,-0.55,0.27,1.55);
         }
         @keyframes popIn {
-            from { transform: scale(0.5); opacity: 0; }
+            from { transform: scale(0.3); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-        .popup-box h1 { font-size: 26px; color: #d85a7c; margin-bottom: 10px; }
-        .popup-box p { font-size: 18px; color: #555; margin: 10px 0 20px; }
-        .close-btn {
-            position: absolute; top: 10px; right: 20px;
-            font-size: 28px; color: #ccc; cursor: pointer;
+        .popup-box .icon {
+            font-size: 60px;
+            margin-bottom: 10px;
         }
-        .action-btn {
-            background: #ff7b9c; border: none; color: white;
-            font-size: 16px; padding: 12px 30px; border-radius: 50px;
-            cursor: pointer; box-shadow: 0 5px 15px rgba(255,123,156,0.4);
+        .popup-box .msg {
+            font-size: 20px;
+            color: #d85a7c;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+        .popup-box button {
+            margin-top: 20px;
+            background: #ff7b9c;
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px 35px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255,123,156,0.4);
+        }
+
+        /* ========== 音乐提示按钮 ========== */
+        .music-tip {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #d85a7c;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
-    <div id="petals"></div>
-    <div class="popup-overlay" id="popup">
-        <div class="popup-box">
-            <span class="close-btn" onclick="closePopup()">&times;</span>
-            <h1>🌸 母亲节快乐 🌸</h1>
-            <p>妈妈，您辛苦了！</p>
-            <button class="action-btn" onclick="closePopup()">💖 收下祝福</button>
-        </div>
+
+    <!-- 中间大字祝福 -->
+    <div class="main-text">
+        <h1>🌸 致全世界最美的妈妈 🌸</h1>
+        <div class="sub">母亲节快乐<br>平安喜乐 · 一生安康</div>
     </div>
+
+    <!-- 飘落爱心容器 -->
+    <div id="hearts-container"></div>
+
+    <!-- 音乐开关 -->
+    <button class="music-tip" id="musicBtn" onclick="toggleMusic()">🎵 点我播放音乐</button>
+
     <script>
-        function closePopup() {
-            document.getElementById('popup').style.display = 'none';
+        // ========== 1. 生成满屏爱心 ==========
+        const hearts = ['❤️', '💕', '💖', '💗', '💓'];
+        const container = document.getElementById('hearts-container');
+
+        function createHeart() {
+            const heart = document.createElement('span');
+            heart.className = 'heart';
+            heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 4 + 5) + 's';
+            heart.style.animationDelay = Math.random() * 3 + 's';
+            heart.style.fontSize = (Math.random() * 25 + 20) + 'px';
+            container.appendChild(heart);
+
+            // 动画结束后移除
+            heart.addEventListener('animationend', () => {
+                heart.remove();
+            });
         }
-        (function() {
-            const c = document.getElementById('petals');
-            const e = ['🌸','🌷','💮','💐'];
-            for(let i=0;i<25;i++){
-                const s = document.createElement('span');
-                s.className='petal';
-                s.textContent=e[Math.floor(Math.random()*e.length)];
-                s.style.left=Math.random()*100+'%';
-                s.style.animationDuration=(Math.random()*5+5)+'s';
-                s.style.animationDelay=Math.random()*6+'s';
-                s.style.fontSize=(Math.random()*20+18)+'px';
-                c.appendChild(s);
+
+        // 初始批量生成
+        for (let i = 0; i < 20; i++) {
+            setTimeout(createHeart, i * 200);
+        }
+        // 持续每 0.8 秒生成一个新的
+        setInterval(createHeart, 800);
+
+        // ========== 2. 连环弹窗 ==========
+        const allMsgs = [
+            { icon: '💐', msg: '母亲节快乐！' },
+            { icon: '🌷', msg: '十月怀胎恩似海\n自幼朝夕手相牵' },
+            { icon: '💖', msg: '殚竭心力终为子\n此生为愿母安康' },
+            { icon: '✨', msg: '愿岁月温柔待您\n身体健康 万事顺遂' },
+            { icon: '🌟', msg: '永远年轻\n平安喜乐' },
+        ];
+
+        let msgIndex = 0;
+
+        function showNextPopup() {
+            if (msgIndex >= allMsgs.length) return;
+
+            const data = allMsgs[msgIndex];
+            const overlay = document.createElement('div');
+            overlay.className = 'popup-overlay';
+            overlay.innerHTML = `
+                <div class="popup-box">
+                    <div class="icon">${data.icon}</div>
+                    <div class="msg">${data.msg}</div>
+                    <button onclick="this.closest('.popup-overlay').remove(); showNextPopup();">💖 收下祝福</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            msgIndex++;
+        }
+
+        // 页面加载后0.5秒开始弹窗
+        window.addEventListener('load', () => {
+            setTimeout(showNextPopup, 500);
+        });
+
+        // ========== 3. 背景音乐 ==========
+        // 把 music.mp3 放在和 index.html 同目录下
+        // 如果不需要音乐，可以删除这部分
+        const musicBtn = document.getElementById('musicBtn');
+        let audio = null;
+        let musicPlaying = false;
+
+        function toggleMusic() {
+            if (!audio) {
+                audio = new Audio('music.mp3');
+                audio.loop = true;
+                audio.volume = 0.7;
             }
-        })();
+            if (musicPlaying) {
+                audio.pause();
+                musicBtn.textContent = '🎵 点我播放音乐';
+            } else {
+                audio.play().catch(() => {
+                    alert('音乐文件 music.mp3 未找到，请确保同目录下有该文件');
+                });
+                musicBtn.textContent = '🔊 音乐播放中';
+            }
+            musicPlaying = !musicPlaying;
+        }
     </script>
+
 </body>
 </html>
