@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>母亲节快乐</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #ffd1d1 0%, #ffebf0 100%);
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+        .petal {
+            position: absolute; top: -80px; font-size: 30px;
+            animation: fall linear infinite; opacity: 0.7; pointer-events: none;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.35); display: flex;
+            justify-content: center; align-items: center;
+            z-index: 1000; backdrop-filter: blur(2px);
+        }
+        .popup-box {
+            background: #fff; border-radius: 24px; padding: 40px 30px 30px;
+            text-align: center; box-shadow: 0 20px 40px rgba(255,105,135,0.25);
+            position: relative; max-width: 320px; width: 85%;
+            animation: popIn 0.5s cubic-bezier(0.68,-0.55,0.27,1.55);
+        }
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .popup-box h1 { font-size: 26px; color: #d85a7c; margin-bottom: 10px; }
+        .popup-box p { font-size: 18px; color: #555; margin: 10px 0 20px; }
+        .close-btn {
+            position: absolute; top: 10px; right: 20px;
+            font-size: 28px; color: #ccc; cursor: pointer;
+        }
+        .action-btn {
+            background: #ff7b9c; border: none; color: white;
+            font-size: 16px; padding: 12px 30px; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(255,123,156,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div id="petals"></div>
+    <div class="popup-overlay" id="popup">
+        <div class="popup-box">
+            <span class="close-btn" onclick="closePopup()">&times;</span>
+            <h1>🌸 母亲节快乐 🌸</h1>
+            <p>妈妈，您辛苦了！</p>
+            <button class="action-btn" onclick="closePopup()">💖 收下祝福</button>
+        </div>
+    </div>
+    <script>
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+        (function() {
+            const c = document.getElementById('petals');
+            const e = ['🌸','🌷','💮','💐'];
+            for(let i=0;i<25;i++){
+                const s = document.createElement('span');
+                s.className='petal';
+                s.textContent=e[Math.floor(Math.random()*e.length)];
+                s.style.left=Math.random()*100+'%';
+                s.style.animationDuration=(Math.random()*5+5)+'s';
+                s.style.animationDelay=Math.random()*6+'s';
+                s.style.fontSize=(Math.random()*20+18)+'px';
+                c.appendChild(s);
+            }
+        })();
+    </script>
+</body>
+</html>
